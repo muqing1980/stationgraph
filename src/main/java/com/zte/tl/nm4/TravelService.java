@@ -11,16 +11,28 @@ import java.util.*;
 
 
 class TravelService {
-    static int routeDistance(String start, String... stations) throws NoSuchRouteException {
-        Route route = GraphFactory.getInstance().getGraph().queryRouteBySpecificStations(start, stations);
+    private static TravelService instance = new TravelService();
+
+    public static TravelService getInstance() {
+        return instance;
+    }
+
+    private Graph graph;
+
+    private TravelService() {
+        graph = GraphFactory.getInstance().getGraph();
+    }
+
+    int calculateDistance(String start, String... stations) throws NoSuchRouteException {
+        Route route = graph.queryRouteBySpecificStations(start, stations);
         if (!route.hasRoute()) {
             throw new NoSuchRouteException();
         }
         return route.getDistance();
     }
 
-    static List<String> queryRoutesByMaxViaStations(String start, String end, int maxStations) {
-        Node root = GraphFactory.getInstance().getGraph().buildTreeForDepth(start, maxStations);
+    List<String> queryRoutesByMaxViaStations(String start, String end, int maxStations) {
+        Node root = graph.buildTreeForDepth(start, maxStations);
         List<Node> list = new ArrayList<Node>();
         for (int i = 0; i < maxStations; i++) {
             list.addAll(searchNodesFromTreeByDepth(root, end, i + 1));
@@ -28,13 +40,13 @@ class TravelService {
         return buildStationSeq(list);
     }
 
-    static List<String> queryRoutesByExpectViaStations(String start, String end, int stations) {
-        Node root = GraphFactory.getInstance().getGraph().buildTreeForDepth(start, stations);
+    List<String> queryRoutesByExpectViaStations(String start, String end, int stations) {
+        Node root = graph.buildTreeForDepth(start, stations);
         List<Node> list = searchNodesFromTreeByDepth(root, end, stations);
         return buildStationSeq(list);
     }
 
-    private static List<String> buildStationSeq(List<Node> list) {
+    private List<String> buildStationSeq(List<Node> list) {
         List<String> routes = new ArrayList<String>();
         List<String> route;
         for (Node node : list) {
@@ -54,7 +66,7 @@ class TravelService {
         return routes;
     }
 
-    private static List<Node> searchNodesFromTreeByDepth(Node node, String end, int depth) {
+    private List<Node> searchNodesFromTreeByDepth(Node node, String end, int depth) {
         List<Node> list = node.getChildren();
         int times = depth - 1;
         List<Node> subNodes = new ArrayList<Node>();
@@ -72,8 +84,8 @@ class TravelService {
         return subNodes;
     }
 
-    static int queryShortestRoute(String start, String end) {
-        Node root = GraphFactory.getInstance().getGraph().buildTree(start, end);
+    int queryShortestRoute(String start, String end) {
+        Node root = graph.buildTree(start, end);
         List<Node> nodes = searchRoute(end, root);
         List<Route> list = buildRoutes(start, end, nodes);
         Collections.sort(list, new Comparator<Route>() {
@@ -85,7 +97,7 @@ class TravelService {
         return list.get(0).getDistance();
     }
 
-    private static List<Node> searchRoute(String end, Node node) {
+    private List<Node> searchRoute(String end, Node node) {
         List<Node> subNodes = new ArrayList<Node>();
         List<Node> list = node.getChildren();
         if (list.size() == 0 && node.getName().equals(end)) {
@@ -98,7 +110,7 @@ class TravelService {
         return subNodes;
     }
 
-    private static List<Route> buildRoutes(String start, String end, List<Node> list) {
+    private List<Route> buildRoutes(String start, String end, List<Node> list) {
         List<Route> result = new ArrayList<Route>();
         LinkedList<Edge> edges;
         for (Node node : list) {
@@ -113,8 +125,8 @@ class TravelService {
         return result;
     }
 
-    public static List<String> queryRouteSeqByThreshold(String start, String end, int threshold) throws Exception {
-        Node root = GraphFactory.getInstance().getGraph().buildTree(start, end);
+     List<String> queryRouteSeqByThreshold(String start, String end, int threshold) throws Exception {
+        Node root = graph.buildTree(start, end);
         List<Node> nodes = searchRoute(end, root);
         List<Route> list = buildRoutes(start, end, nodes);
         List<Route> result = new ArrayList<Route>();
@@ -133,12 +145,12 @@ class TravelService {
                 newRoute.addEdges(route.getEdges());
             }
         }
-        for(int i=0;i<list.size();i++){
-            for(int j=0;j<list.size();j++){
-                if(i==j){
+        for (int i = 0; i < list.size(); i++) {
+            for (int j = 0; j < list.size(); j++) {
+                if (i == j) {
                     continue;
                 }
-                if((list.get(i).getDistance()+list.get(j).getDistance()) <threshold){
+                if ((list.get(i).getDistance() + list.get(j).getDistance()) < threshold) {
                     Route route = (Route) list.get(i).clone();
                     route.addEdges(list.get(j).getEdges());
                     result.add(route);
@@ -147,9 +159,10 @@ class TravelService {
         }
         return buildRouteStationSeq(result);
     }
-    private static List<String> buildRouteStationSeq(List<Route> routes){
+
+    private List<String> buildRouteStationSeq(List<Route> routes) {
         List<String> result = new ArrayList<String>();
-        for(Route route: routes){
+        for (Route route : routes) {
             result.add(route.getStationSeq());
         }
         return result;

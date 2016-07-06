@@ -23,12 +23,8 @@ public class GraphFactory {
         graph = new Graph();
     }
 
-    Graph createAndGet(String... args) {
-        create(args);
-        return getGraph();
-    }
 
-    private void create(String... args) {
+    void create(String... args) {
         graph.clear();
         Edge edge;
         for (String str : args) {
