@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Condition {
-    private Graph graph;
     private String start;
     private String end;
     private List<String> viaStations;
@@ -15,17 +14,12 @@ public class Condition {
     private int distanceUpperLimit;
 
     private Condition(Builder builder) {
-        this.graph = builder.graph;
         this.start = builder.start;
         this.end = builder.end;
         this.viaStations = builder.viaStations;
         this.maxViaStations = builder.maxViaStations;
         this.expectViaStations = builder.expectViaStations;
         this.distanceUpperLimit = builder.distanceUpperLimit;
-    }
-
-    public Graph getGraph() {
-        return graph;
     }
 
     public String getStart() {
@@ -53,7 +47,6 @@ public class Condition {
     }
 
     public static class Builder {
-        private Graph graph;
         private String start;
         private String end;
         private List<String> viaStations = new ArrayList<String>();
@@ -61,31 +54,33 @@ public class Condition {
         private int expectViaStations = -1;
         private int distanceUpperLimit = -1;
 
-        public Builder(Graph graph, String start, String end) {
-            Preconditions.checkNotNull(graph);
+        public Builder(String start, String end) {
             Preconditions.checkNotNull(start);
             Preconditions.checkNotNull(end);
-            this.graph = graph;
-            this.start = start;
-            this.end = end;
+            this.start = start.toUpperCase();
+            this.end = end.toUpperCase();
         }
 
         public Builder via(String station) {
-            this.viaStations.add(station);
+            Preconditions.checkNotNull(station);
+            this.viaStations.add(station.toUpperCase());
             return this;
         }
 
-        public Builder setMaxViaStations(int maxViaStations) {
+        public Builder maxViaStations(int maxViaStations) {
+            Preconditions.checkArgument(maxViaStations > 0);
             this.maxViaStations = maxViaStations;
             return this;
         }
 
-        public Builder setExpectViaStationsint(int expectViaStations) {
+        public Builder expectViaStations(int expectViaStations) {
+            Preconditions.checkArgument(expectViaStations > 0);
             this.expectViaStations = expectViaStations;
             return this;
         }
 
-        public Builder setDistanceUpperLimit(int distanceUpperLimit) {
+        public Builder distanceUpperLimit(int distanceUpperLimit) {
+            Preconditions.checkArgument(distanceUpperLimit > 0);
             this.distanceUpperLimit = distanceUpperLimit;
             return this;
         }

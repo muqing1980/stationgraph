@@ -3,12 +3,13 @@ package com.zte.tl.nm4;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.zte.tl.nm4.domain.Edge;
+import com.zte.tl.nm4.domain.Graph;
 
 import java.util.List;
 import java.util.regex.Pattern;
 
 
-public class GraphFactory {
+class GraphFactory {
 
     private final static GraphFactory instance = new GraphFactory();
 
@@ -23,11 +24,10 @@ public class GraphFactory {
         graph = new Graph();
     }
 
-
-    void create(String... args) {
+    void create(List<String> list) {
         graph.clear();
         Edge edge;
-        for (String str : args) {
+        for (String str : list) {
             edge = buildEdge(str);
             graph.addEdge(edge);
         }
