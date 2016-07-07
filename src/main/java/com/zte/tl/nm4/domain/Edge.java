@@ -41,10 +41,10 @@ public class Edge {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Edge)) return false;
-        Edge edge = (Edge) o;
+    public boolean equals(Object that) {
+        if (this == that) return true;
+        if (!(that instanceof Edge)) return false;
+        Edge edge = (Edge) that;
         return getDistance() == edge.getDistance() &&
                 Objects.equal(getFrom(), edge.getFrom()) &&
                 Objects.equal(getTo(), edge.getTo());
