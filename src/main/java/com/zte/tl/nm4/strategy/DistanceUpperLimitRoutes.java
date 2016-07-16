@@ -19,10 +19,6 @@ public class DistanceUpperLimitRoutes implements Strategy<List<String>, Conditio
         List<Node> nodes = searchRoute(condition.getEnd(), root);
         List<Route> list = buildRoutes(condition.getStart(), condition.getEnd(), nodes);
         List<Route> result = new ArrayList<Route>();
-//        result.addAll(oneRouteByUpperLimit(list, condition.getDistanceUpperLimit()));
-//        result.addAll(oneRouteCycleByUpperLimit(list, condition.getDistanceUpperLimit()));
-//        result.addAll(multiRouteByUpperLimit(list, condition.getDistanceUpperLimit()));
-//
         result.addAll(combinatedRoutes(list, condition.getDistanceUpperLimit()));
         return buildRouteStationSeq(result);
     }
